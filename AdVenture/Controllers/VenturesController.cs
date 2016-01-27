@@ -7,9 +7,9 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using AdVenture.Models;
-using System.Security.Principal;
 using Microsoft.AspNet.Identity;
-using Microsoft.AspNet;
+using Microsoft.AspNet.Identity.Owin;
+
 
 
 namespace AdVenture.Controllers
@@ -18,11 +18,15 @@ public class VenturesController : Controller
     {
         private VentureCapitalDbContext db = new VentureCapitalDbContext();
         private ApplicationDbContext _context = new ApplicationDbContext();
-
+       
         // GET: Ventures
         public ActionResult Index()
         {
-            return View(db.Ventures.ToList());
+            ApplicationUser currentUser = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>().FindById(User.Identity.GetUserId());
+            //ApplicationUser currentUser = _context.Users.Single(u => u.Id == HttpContext.User.Identity.GetUserId());
+            //var currentUser = UserManager.FindById(User.Identity.GetUserId());
+            var ventures = from v in db.Ventures where v.investorID == currentUser.Id select v;
+            return View(ventures.ToList());
         }
 
         // GET: Ventures/Details/5
@@ -56,10 +60,11 @@ public class VenturesController : Controller
             if (ModelState.IsValid)
             {
                 venture.createdOn = DateTime.Now;
-                ApplicationUser currentUser = _context.Users.Single(u => u.Id == HttpContext.User.Identity.GetUserId());
-                //currentUser.investor.PersonalInvestments.Add(venture); 
+                ApplicationUser currentUser = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>().FindById(User.Identity.GetUserId());
+                venture.investorID = currentUser.Id; 
                 db.Ventures.Add(venture);
                 db.SaveChanges();
+                // problem is with investor id primary key.
                 return RedirectToAction("Index");
             }
 

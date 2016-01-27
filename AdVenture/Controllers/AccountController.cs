@@ -15,9 +15,12 @@ namespace AdVenture.Controllers
     [Authorize]
     public class AccountController : Controller
     {
+        private VentureCapitalDbContext db = new VentureCapitalDbContext();
+        // might not need db here
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
-        
+        private ApplicationDbContext _context = new ApplicationDbContext();
+
 
         public AccountController()
         {
@@ -27,7 +30,7 @@ namespace AdVenture.Controllers
         {
             UserManager = userManager;
             SignInManager = signInManager;
-            Investor _investor = new Investor();
+            
     }
 
         public ApplicationSignInManager SignInManager
@@ -153,10 +156,17 @@ namespace AdVenture.Controllers
         {
             if (ModelState.IsValid)
             {
-                
-                var user = new ApplicationUser {UserName = model.Email, Email = model.Email} ;
-                //user.investor.FirstName = model.FirstName;
-                //user.investor.LastName = model.LastName;
+
+                var user = new ApplicationUser { UserName = model.Email, Email = model.Email, FirstName = model.FirstName, LastName = model.LastName, investor = new Investor() } ;
+                user.investor.Id = user.Id;
+                user.investor.FirstName = model.FirstName;
+                user.investor.LastName = model.LastName;
+                db.Investors.Add(user.investor);
+                db.SaveChanges();
+                // is it saving it to db or not?
+
+                //user.investor.PersonalInvestments
+
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
@@ -373,6 +383,7 @@ namespace AdVenture.Controllers
                 {
                     return View("ExternalLoginFailure");
                 }
+                
                 var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
                 var result = await UserManager.CreateAsync(user);
                 if (result.Succeeded)

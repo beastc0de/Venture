@@ -11,7 +11,7 @@ namespace AdVenture.Models
     {
         [Key]
         public int Id { get; set; }
-        public virtual int investorID { get; set; }
+        public virtual string investorID { get; set; }
         public virtual int ventureID { get; set; }
         public decimal bid { get; set; }
         public DateTime createdOn { get; set; }

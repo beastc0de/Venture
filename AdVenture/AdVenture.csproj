@@ -172,8 +172,7 @@
     <Compile Include="Controllers\DiscoverController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
-    <Compile Include="Controllers\MyInvestmentsController.cs" />
-    <Compile Include="Controllers\MyVenturesController.cs" />
+    <Compile Include="Controllers\InvestmentsController.cs" />
     <Compile Include="Controllers\VenturesController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -244,8 +243,6 @@
     <Content Include="Views\Manage\VerifyPhoneNumber.cshtml" />
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
-    <Content Include="Views\MyVentures\Index.cshtml" />
-    <Content Include="Views\MyInvestments\Index.cshtml" />
     <Content Include="Views\Discover\Index.cshtml" />
     <Content Include="Views\Bids\Create.cshtml" />
     <Content Include="Views\Bids\Delete.cshtml" />

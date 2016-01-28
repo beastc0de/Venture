@@ -11,119 +11,113 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 
 
-
 namespace AdVenture.Controllers
-{ 
-public class VenturesController : Controller
+{
+    public class OffersController : Controller
     {
         private VentureCapitalDbContext db = new VentureCapitalDbContext();
-        private ApplicationDbContext _context = new ApplicationDbContext();
-       
-        // GET: Ventures
+
+        // GET: Offers
         public ActionResult Index()
         {
             ApplicationUser currentUser = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>().FindById(User.Identity.GetUserId());
-            //ApplicationUser currentUser = _context.Users.Single(u => u.Id == HttpContext.User.Identity.GetUserId());
-            //var currentUser = UserManager.FindById(User.Identity.GetUserId());
-            var ventures = from v in db.Ventures where v.investorID == currentUser.Id select v;
-            return View(ventures.ToList());
+            var userVentures = from v in db.Ventures where v.investorID == currentUser.Id select v;
+            //var query = from b in bids join v in currentUser.investor.PersonalInvestments on b.ventureID equals v.Id select b;
+            var query = from b in db.Bids join v in userVentures on b.ventureID equals v.Id select b;
+            return View(query.ToList());
         }
 
-        // GET: Ventures/Details/5
+        // GET: Offers/Details/5
         public ActionResult Details(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Venture venture = db.Ventures.Find(id);
-            if (venture == null)
+            Bids bids = db.Bids.Find(id);
+            if (bids == null)
             {
                 return HttpNotFound();
             }
-            return View(venture);
+            return View(bids);
         }
 
-        // GET: Ventures/Create
+        // GET: Offers/Create
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: Ventures/Create
+        // POST: Offers/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,CompanyName,CompanyDescription,OwnerName,CapitalRaised,Ask,createdOn,Sector,Verified")] Venture venture)
+        public ActionResult Create([Bind(Include = "Id,investorID,ventureID,bid,bidStake,createdOn,status")] Bids bids)
         {
             if (ModelState.IsValid)
             {
-                venture.createdOn = DateTime.Now;
-                ApplicationUser currentUser = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>().FindById(User.Identity.GetUserId());
-                venture.investorID = currentUser.Id; 
-                db.Ventures.Add(venture);
+                db.Bids.Add(bids);
                 db.SaveChanges();
-               
                 return RedirectToAction("Index");
             }
 
-            return View(venture);
+            return View(bids);
         }
 
-        // GET: Ventures/Edit/5
+        // GET: Offers/Edit/5
         public ActionResult Edit(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Venture venture = db.Ventures.Find(id);
-            if (venture == null)
+            Bids bids = db.Bids.Find(id);
+            if (bids == null)
             {
                 return HttpNotFound();
             }
-            return View(venture);
+            return View(bids);
         }
 
-        // POST: Ventures/Edit/5
+        // POST: Offers/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,CompanyName,CompanyDescription,OwnerName,CapitalRaised,Ask,createdOn,Sector,Verified")] Venture venture)
+        public ActionResult Edit([Bind(Include = "Id,investorID,ventureID,bid,bidStake,createdOn,status")] Bids bids)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(venture).State = EntityState.Modified;
+                db.Entry(bids).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            return View(venture);
+            return View(bids);
         }
 
-        // GET: Ventures/Delete/5
+        // GET: Offers/Delete/5
         public ActionResult Delete(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Venture venture = db.Ventures.Find(id);
-            if (venture == null)
+            Bids bids = db.Bids.Find(id);
+            if (bids == null)
             {
                 return HttpNotFound();
             }
-            return View(venture);
+            return View(bids);
         }
 
-        // POST: Ventures/Delete/5
+        // POST: Offers/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Venture venture = db.Ventures.Find(id);
-            db.Ventures.Remove(venture);
+            Bids bids = db.Bids.Find(id);
+            db.Bids.Remove(bids);
             db.SaveChanges();
             return RedirectToAction("Index");
         }
@@ -138,4 +132,3 @@ public class VenturesController : Controller
         }
     }
 }
-

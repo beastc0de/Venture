@@ -12,6 +12,6 @@ namespace AdVenture.Models
         public DbSet<Venture> Ventures { get; set; }
         public DbSet<Investment> Investments { get; set; }
         public DbSet<Investor> Investors { get; set; }
-        public DbSet<Bid> Bids { get; set; }
+        public DbSet<Bids> Bids { get; set; }
     }
 }

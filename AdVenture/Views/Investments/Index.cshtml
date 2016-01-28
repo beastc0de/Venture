@@ -4,11 +4,12 @@
     ViewBag.Title = "Index";
 }
 
-<h2>My Bids</h2>
+<h2>My Investments</h2>
 
-<p>
+@*<p>
+    add sell button here
     @Html.ActionLink("Create New", "Create")
-</p>
+</p>*@
 <table class="table">
     <tr>
         <th>
@@ -53,9 +54,9 @@
             @Html.DisplayFor(modelItem => item.status)
         </td>
         <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
+            
             @Html.ActionLink("Details", "Details", new { id=item.Id }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
+            
         </td>
     </tr>
 }

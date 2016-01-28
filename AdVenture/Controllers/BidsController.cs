@@ -7,10 +7,13 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using AdVenture.Models;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.Owin;
+
 
 namespace AdVenture.Controllers
 {
-    public class Bids : Controller
+    public class BidsController : Controller
     {
         private VentureCapitalDbContext db = new VentureCapitalDbContext();
 
@@ -27,17 +30,20 @@ namespace AdVenture.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Bid bid = db.Bids.Find(id);
-            if (bid == null)
+            Bids bids = db.Bids.Find(id);
+            if (bids == null)
             {
                 return HttpNotFound();
             }
-            return View(bid);
+            return View(bids);
         }
 
         // GET: Bids/Create
-        public ActionResult Create()
+        public ActionResult Create(int id)
         {
+            Venture venture = db.Ventures.Find(id);
+            ViewData["ventureID"] = venture.Id;
+            
             return View();
         }
 
@@ -46,16 +52,21 @@ namespace AdVenture.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,investorID,ventureID,bid,createdOn,status")] Bid bid)
+        public ActionResult Create([Bind(Include = "Id,investorID,ventureID,bid,bidStake,createdOn,status")] Bids bids)
         {
             if (ModelState.IsValid)
             {
-                db.Bids.Add(bid);
+                ApplicationUser currentUser = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>().FindById(User.Identity.GetUserId());
+                bids.createdOn = DateTime.Now;
+                bids.status = "pending";
+                bids.investorID = currentUser.Id;
+                bids.ventureID = (int)TempData["ventureId"];
+                db.Bids.Add(bids);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
-            return View(bid);
+            return View(bids);
         }
 
         // GET: Bids/Edit/5
@@ -65,12 +76,12 @@ namespace AdVenture.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Bid bid = db.Bids.Find(id);
-            if (bid == null)
+            Bids bids = db.Bids.Find(id);
+            if (bids == null)
             {
                 return HttpNotFound();
             }
-            return View(bid);
+            return View(bids);
         }
 
         // POST: Bids/Edit/5
@@ -78,15 +89,15 @@ namespace AdVenture.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,investorID,ventureID,bid,createdOn,status")] Bid bid)
+        public ActionResult Edit([Bind(Include = "Id,investorID,ventureID,bid,bidStake,createdOn,status")] Bids bids)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(bid).State = EntityState.Modified;
+                db.Entry(bids).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            return View(bid);
+            return View(bids);
         }
 
         // GET: Bids/Delete/5
@@ -96,12 +107,12 @@ namespace AdVenture.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Bid bid = db.Bids.Find(id);
-            if (bid == null)
+            Bids bids = db.Bids.Find(id);
+            if (bids == null)
             {
                 return HttpNotFound();
             }
-            return View(bid);
+            return View(bids);
         }
 
         // POST: Bids/Delete/5
@@ -109,8 +120,8 @@ namespace AdVenture.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Bid bid = db.Bids.Find(id);
-            db.Bids.Remove(bid);
+            Bids bids = db.Bids.Find(id);
+            db.Bids.Remove(bids);
             db.SaveChanges();
             return RedirectToAction("Index");
         }

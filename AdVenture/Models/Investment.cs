@@ -11,6 +11,7 @@ namespace AdVenture.Models
     {
         [Key]
         public int Id { get; set; }
+        //public virtual int bidId { get; set; }
         public virtual string InvestorID { get; set; }
         public virtual int VentureID { get; set; }
 

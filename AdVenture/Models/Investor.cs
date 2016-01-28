@@ -15,6 +15,5 @@ namespace AdVenture.Models
         public string LastName { get; set; }
         public List<Venture> PersonalInvestments { get; set; }
 
-
     }
 }

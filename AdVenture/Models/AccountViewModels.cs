@@ -88,6 +88,41 @@ namespace AdVenture.Models
         [Display(Name = "Confirm password")]
         [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
+
+        [Required]
+        [Display(Name = "Address")]
+        public string Address { get; set; }
+
+        [Required]
+        public string City { get; set; }
+
+        [Required]
+        public int Zip { get; set; }
+
+        [Required]
+        [Display(Name ="Country")]
+        public string CountryCode { get; set; }
+
+        [Required]
+        [Display(Name ="Card Type")]
+        public string CCType { get; set; }
+
+        [Required]
+        [Display(Name ="Card Number")]
+        public int CCNumber { get; set; }
+
+        [Required]
+        [Display(Name ="Card Security #")]
+        public int CCV2 { get; set; }
+
+        [Required]
+        [Display(Name = "Card Expiration Month")]
+        public int CCExpireMonth { get; set; }
+
+        [Required]
+        [Display(Name = "Card Expiration Year")]
+        public int CCExpireYear { get; set; }
+
     }
 
     public class ResetPasswordViewModel

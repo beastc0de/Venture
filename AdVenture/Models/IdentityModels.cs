@@ -14,6 +14,15 @@ namespace AdVenture.Models
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        public string AddressLine1 { get; set; }
+        public string City { get; set; }
+        public string CountryCode { get; set; }
+        public int ZipCode { get; set; }
+        public int CCNumber { get; set; }
+        public int CCV2 { get; set; }
+        public int CCExpireMonth { get; set; }
+        public int CCExpireYear { get; set; }
+        public string CCType { get; set; }
         public Investor investor { get; set; }
         
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager)

@@ -156,16 +156,14 @@ namespace AdVenture.Controllers
         {
             if (ModelState.IsValid)
             {
+                var user = new ApplicationUser { UserName = model.Email, Email = model.Email, FirstName = model.FirstName, LastName = model.LastName, AddressLine1 = model.Address, City = model.City, ZipCode = model.Zip, CountryCode = model.CountryCode, CCType = model.CCType, CCNumber = model.CCNumber, CCExpireMonth = model.CCExpireMonth, CCExpireYear = model.CCExpireYear, CCV2 = model.CCV2, investor = new Investor() } ;
 
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email, FirstName = model.FirstName, LastName = model.LastName, investor = new Investor() } ;
                 user.investor.Id = user.Id;
                 user.investor.FirstName = model.FirstName;
                 user.investor.LastName = model.LastName;
                 db.Investors.Add(user.investor);
                 db.SaveChanges();
-                // is it saving it to db or not?
-
-                //user.investor.PersonalInvestments
+                // might not need user.investor anymore
 
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)

@@ -22,7 +22,6 @@ namespace AdVenture.Controllers
         {
             ApplicationUser currentUser = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>().FindById(User.Identity.GetUserId());
             var userVentures = from v in db.Ventures where v.investorID == currentUser.Id select v;
-            //var query = from b in bids join v in currentUser.investor.PersonalInvestments on b.ventureID equals v.Id select b;
             var query = from b in db.Bids join v in userVentures on b.ventureID equals v.Id select b;
             return View(query.ToList());
         }

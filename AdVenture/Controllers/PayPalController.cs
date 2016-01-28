@@ -4,23 +4,21 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using PayPal.Api;
-using System.Configuration;
-
+using AdVenture.Services;
 
 namespace AdVenture.Controllers
 {
     public class PayPalController : Controller
     {
-        
+
         // GET: PayPal
         public ActionResult Index()
         {
-            
             return View();
         }
         public ActionResult PaymentWithCreditCard()
-{
-            //create and item for which you are taking payment
+        {
+            //create an item for which you are taking payment
             //if you need to add more items in the list
             //Then you will need to create multiple item objects or use some loop to instantiate object
             Item item = new Item();
@@ -45,7 +43,6 @@ namespace AdVenture.Controllers
             billingAddress.postal_code = "43210";
             billingAddress.state = "NY";
 
-
             //Now Create an object of credit card and add above details to it
             //Please replace your credit card details over here which you got from paypal
             CreditCard crdtCard = new CreditCard();
@@ -53,22 +50,22 @@ namespace AdVenture.Controllers
             crdtCard.cvv2 = "874";  //card cvv2 number
             crdtCard.expire_month = 1; //card expire date
             crdtCard.expire_year = 2020; //card expire year
-            crdtCard.first_name = "Aman";
-            crdtCard.last_name = "Thakur";
+            crdtCard.first_name = "Matt";
+            crdtCard.last_name = "Heller";
             crdtCard.number = "1234567890123456"; //enter your credit card number here
             crdtCard.type = "visa"; //credit card type here paypal allows 4 types
 
             // Specify details of your payment amount.
             Details details = new Details();
-            details.shipping = "1";
+            details.shipping = "0";
             details.subtotal = "5";
-            details.tax = "1";
+            details.tax = "0";
 
             // Specify your total payment amount and assign the details object
             Amount amnt = new Amount();
             amnt.currency = "USD";
             // Total = shipping tax + subtotal.
-            amnt.total = "7";
+            amnt.total = details.subtotal;
             amnt.details = details;
 
             // Now make a transaction object and assign the Amount object
@@ -108,37 +105,186 @@ namespace AdVenture.Controllers
 
             try
             {
-               //getting context from the paypal
-               //basically we are sending the clientID and clientSecret key in this function
-               //to the get the context from the paypal API to make the payment
-               //for which we have created the object above.
+                //getting context from the paypal
+                //basically we are sending the clientID and clientSecret key in this function
+                //to get the context from the paypal API to make the payment
+                //for which we have created the object above.
 
-               //Basically, apiContext object has a accesstoken which is sent by the paypal
-               //to authenticate the payment to facilitator account.
-               //An access token could be an alphanumeric string
+                //Basically, apiContext object has a accesstoken which is sent by the paypal
+                //to authenticate the payment to facilitator account.
+                //An access token could be an alphanumeric string
 
                 APIContext apiContext = Configuration.GetAPIContext();
 
-               //Create is a Payment class function which actually sends the payment details
-               //to the paypal API for the payment. The function is passed with the ApiContext
-               //which we received above.
+                //Create is a Payment class function which actually sends the payment details
+                //to the paypal API for the payment. The function is passed with the ApiContext
+                //which we received above.
 
                 Payment createdPayment = pymnt.Create(apiContext);
 
-               //if the createdPayment.state is "approved" it means the payment was successful else not
+                //if the createdPayment.state is "approved" it means the payment was successful else not
 
-               if(createdPayment.state.ToLower() != "approved")
-               {
-                     return View("FailureView");
-               }
-            }
-            catch (PayPal.PayPalException ex)
+                if (createdPayment.state.ToLower() != "approved")
+                {
+                    return View("FailureView");
+                }
+            } catch (PayPal.PayPalException ex)
             {
-                Logger.Log("Error: "+ex.Message);
+                Logger.Log("Error: " + ex.Message);
                 return View("FailureView");
             }
 
             return View("SuccessView");
-}
+        }
+
+////////
+        public ActionResult PaymentWithPaypal()
+        {
+            //getting the apiContext as earlier
+            APIContext apiContext = Configuration.GetAPIContext();
+
+            try
+            {
+                string payerId = Request.Params["PayerID"];
+
+                if (string.IsNullOrEmpty(payerId))
+                {
+                    //this section will be executed first because PayerID doesn't exist
+                    //it is returned by the create function call of the payment class
+
+                    // Creating a payment
+                    // baseURL is the url on which paypal sendsback the data.
+                    // So we have provided URL of this controller only
+                    string baseURI = Request.Url.Scheme + "://" + Request.Url.Authority +
+                                "/Paypal/PaymentWithPayPal?";
+
+                    //guid we are generating for storing the paymentID received in session
+                    //after calling the create function and it is used in the payment execution
+
+                    var guid = Convert.ToString((new Random()).Next(100000));
+
+                    //CreatePayment function gives us the payment approval url
+                    //on which payer is redirected for paypal account payment
+
+                    var createdPayment = this.CreatePayment(apiContext, baseURI + "guid=" + guid);
+
+                    //get links returned from paypal in response to Create function call
+
+                    var links = createdPayment.links.GetEnumerator();
+
+                    string paypalRedirectUrl = null;
+
+                    while (links.MoveNext())
+                    {
+                        Links lnk = links.Current;
+
+                        if (lnk.rel.ToLower().Trim().Equals("approval_url"))
+                        {
+                            //saving the payapalredirect URL to which user will be redirected for payment
+                            paypalRedirectUrl = lnk.href;
+                        }
+                    }
+
+                    // saving the paymentID in the key guid
+                    Session.Add(guid, createdPayment.id);
+
+                    return Redirect(paypalRedirectUrl);
+                } else
+                {
+                    // This section is executed when we have received all the payments parameters
+
+                    // from the previous call to the function Create
+
+                    // Executing a payment
+
+                    var guid = Request.Params["guid"];
+
+                    var executedPayment = ExecutePayment(apiContext, payerId, Session[guid] as string);
+
+                    if (executedPayment.state.ToLower() != "approved")
+                    {
+                        return View("FailureView");
+                    }
+                }
+            } catch (Exception ex)
+            {
+                Logger.Log("Error" + ex.Message);
+                return View("FailureView");
+            }
+
+            return View("SuccessView");
+        }
+
+        private PayPal.Api.Payment payment;
+
+        private Payment ExecutePayment(APIContext apiContext, string payerId, string paymentId)
+        {
+            var paymentExecution = new PaymentExecution() { payer_id = payerId };
+            this.payment = new Payment() { id = paymentId };
+            return this.payment.Execute(apiContext, paymentExecution);
+        }
+
+        private Payment CreatePayment(APIContext apiContext, string redirectUrl)
+        {
+
+            //similar to credit card create itemlist and add item objects to it
+            var itemList = new ItemList() { items = new List<Item>() };
+
+            itemList.items.Add(new Item()
+            {
+                name = "Item Name",
+                currency = "USD",
+                price = "5",
+                quantity = "1",
+                sku = "sku"
+            });
+
+            var payer = new Payer() { payment_method = "paypal" };
+
+            // Configure Redirect Urls here with RedirectUrls object
+            var redirUrls = new RedirectUrls()
+            {
+                cancel_url = redirectUrl,
+                return_url = redirectUrl
+            };
+
+            // similar as we did for credit card, do here and create details object
+            var details = new Details()
+            {
+                tax = "0",
+                shipping = "0",
+                subtotal = "5"
+            };
+
+            // similar as we did for credit card, do here and create amount object
+            var amount = new Amount()
+            {
+                currency = "USD",
+                total = details.subtotal, // Total must be equal to sum of shipping, tax and subtotal.
+                details = details
+            };
+
+            var transactionList = new List<Transaction>();
+
+            transactionList.Add(new Transaction()
+            {
+                description = "Transaction description.",
+                invoice_number = "your invoice number",
+                amount = amount,
+                item_list = itemList
+            });
+
+            this.payment = new Payment()
+            {
+                intent = "sale",
+                payer = payer,
+                transactions = transactionList,
+                redirect_urls = redirUrls
+            };
+
+            // Create a payment using a APIContext
+            return this.payment.Create(apiContext);
+
+        }
     }
 }

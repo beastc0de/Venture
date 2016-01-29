@@ -12,6 +12,9 @@ namespace AdVenture.Models
         [Key]
         public int Id { get; set; }
         public virtual string investorID { get; set; }
+
+        [Display(Name="Logo")]
+        public string LogoDesign {get;set;}
         [Display(Name = "Company Name")]
         [Required]
         public string CompanyName { get; set; }

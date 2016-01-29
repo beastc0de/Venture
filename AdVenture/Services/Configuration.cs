@@ -24,7 +24,7 @@ namespace AdVenture.Services
         // Create the configuration map that contains mode and other optional configuration details.
         public static Dictionary<string, string> GetConfig()
         {
-            return PayPal.Api.ConfigManager.Instance.GetProperties();
+            return ConfigManager.Instance.GetProperties();
         }
 
         // Create accessToken

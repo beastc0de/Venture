@@ -97,7 +97,10 @@ namespace AdVenture.Models
         public string City { get; set; }
 
         [Required]
-        public int Zip { get; set; }
+        public string State { get; set; }
+
+        [Required]
+        public string Zip { get; set; }
 
         [Required]
         [Display(Name ="Country")]
@@ -109,11 +112,11 @@ namespace AdVenture.Models
 
         [Required]
         [Display(Name ="Card Number")]
-        public int CCNumber { get; set; }
+        public string CCNumber { get; set; }
 
         [Required]
         [Display(Name ="Card Security #")]
-        public int CCV2 { get; set; }
+        public string CCV2 { get; set; }
 
         [Required]
         [Display(Name = "Card Expiration Month")]

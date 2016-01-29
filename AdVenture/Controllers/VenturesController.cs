@@ -12,6 +12,7 @@ using Microsoft.AspNet.Identity.Owin;
 
 
 
+
 namespace AdVenture.Controllers
 { 
 public class VenturesController : Controller

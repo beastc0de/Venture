@@ -15,6 +15,7 @@ namespace AdVenture.Models
 
         [Display(Name="Logo")]
         public string LogoDesign {get;set;}
+
         [Display(Name = "Company Name")]
         [Required]
         public string CompanyName { get; set; }

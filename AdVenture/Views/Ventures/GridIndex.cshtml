@@ -1,0 +1,60 @@
+﻿@model IEnumerable<AdVenture.Models.Venture>
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loading Effects for Grid Items | Demo 1</title>
+    <meta name="description" content="Loading Effects for Grid Items with CSS Animations" />
+    <meta name="keywords" content="css animation, loading effect, google plus, grid items, masonry" />
+    <meta name="author" content="Codrops" />
+    <link rel="stylesheet" type="text/css" href="~/Content/component.css" />
+    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+    <script src="~/Scripts/modernizr.custom.js"></script>
+
+</head>
+<body>
+    <h2>My Ventures</h2>
+
+    <p>
+        @Html.ActionLink("Create New", "Create")
+    </p>
+    <div class="grid">
+
+        @foreach (var item in Model)
+        {
+            <div class="grid-item">
+                <hr/>
+                <div><img src=@item.LogoDesign style="width:100%;" align="middle"></div>
+                <hr />
+                <p>@Html.LabelFor(modelItem => item.CompanyName):  @Html.DisplayFor(modelItem => item.CompanyName)</p>
+                <p>@Html.LabelFor(modelItem => item.OwnerName):  @Html.DisplayFor(ModelItem => item.OwnerName)</p>
+                <p> @Html.LabelFor(modelItem => item.CompanyDescription):  @Html.DisplayFor(modelItem => item.CompanyDescription)</p>
+                <p> @Html.LabelFor(modelItem => item.CapitalRaised):  @Html.DisplayFor(modelItem => item.CapitalRaised)</p>
+                <p> @Html.LabelFor(modelItem => item.Sector):  @Html.DisplayFor(modelItem => item.Sector)</p>
+                <p align="center"> @Html.ActionLink("Details", "Details", new { id = item.Id }) <p>
+
+            </div>
+        }
+    </div>
+    <script>
+        $(document).ready(function () {
+            $('#grid-item').hover(function () {
+                $("#grid-item").addClass('transition');
+
+            }, function () {
+                $("#grid-item").removeClass('transition');
+            });
+        });
+    </script>
+    <script src="https://npmcdn.com/masonry-layout@4.0/dist/masonry.pkgd.min.js"></script>
+    @*<script src="~/Scripts/imagesloaded.js"></script>
+        <script src="~/Scripts/classie.js"></script>
+        <script src="~/Scripts/AnimOnScroll.js"></script>*@
+</body>

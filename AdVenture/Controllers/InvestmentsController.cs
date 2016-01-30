@@ -20,7 +20,7 @@ namespace AdVenture.Controllers
         public ActionResult Index()
         {
             ApplicationUser currentUser = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>().FindById(User.Identity.GetUserId());
-            var investments = from b in db.Bids where b.status == "approved" && b.investorID == currentUser.Id select b;
+            var investments = from b in db.Bids where b.status == "complete" && b.investorID == currentUser.Id select b;
             return View(investments.ToList());
         }
 

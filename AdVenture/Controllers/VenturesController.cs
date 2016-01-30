@@ -21,7 +21,7 @@ public class VenturesController : Controller
         private ApplicationDbContext _context = new ApplicationDbContext();
        
         // GET: Ventures
-        public ActionResult Index()
+        public ActionResult GridIndex()
         {
             ApplicationUser currentUser = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>().FindById(User.Identity.GetUserId());
             //ApplicationUser currentUser = _context.Users.Single(u => u.Id == HttpContext.User.Identity.GetUserId());
@@ -29,7 +29,7 @@ public class VenturesController : Controller
             var ventures = from v in db.Ventures where v.investorID == currentUser.Id select v;
             return View(ventures.ToList());
         }
-
+        
         // GET: Ventures/Details/5
         public ActionResult Details(int? id)
         {
@@ -56,17 +56,19 @@ public class VenturesController : Controller
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,CompanyName,CompanyDescription,OwnerName,CapitalRaised,Ask,createdOn,Sector,Verified")] Venture venture)
+        public ActionResult Create([Bind(Include = "Id,CompanyName,LogoDesign,CompanyDescription,OwnerName,CapitalRaised,Ask,createdOn,Sector,Verified")] Venture venture)
         {
             if (ModelState.IsValid)
             {
                 venture.createdOn = DateTime.Now;
+              
+
                 ApplicationUser currentUser = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>().FindById(User.Identity.GetUserId());
                 venture.investorID = currentUser.Id; 
                 db.Ventures.Add(venture);
                 db.SaveChanges();
                
-                return RedirectToAction("Index");
+                return RedirectToAction("GridIndex");
             }
 
             return View(venture);

@@ -41,58 +41,40 @@ namespace AdVenture.Controllers
             return View(bids);
         }
 
-        // GET: Offers/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: Offers/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,investorID,ventureID,bid,bidStake,createdOn,status")] Bids bids)
-        {
-            if (ModelState.IsValid)
-            {
-                db.Bids.Add(bids);
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
-
-            return View(bids);
-        }
-
-        // GET: Offers/Edit/5
-        public ActionResult Edit(int? id)
+        
+        public ActionResult Accept(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Bids bids = db.Bids.Find(id);
-            if (bids == null)
+            Bids bid = db.Bids.Find(id);
+            db.Bids.Find(id).status = "accepted";
+            db.SaveChanges();
+           
+            if (bid == null)
             {
                 return HttpNotFound();
             }
-            return View(bids);
+            
+            return View();
         }
 
-        // POST: Offers/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,investorID,ventureID,bid,bidStake,createdOn,status")] Bids bids)
+        public ActionResult Deny(int? id)
         {
-            if (ModelState.IsValid)
+            if (id == null)
             {
-                db.Entry(bids).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            return View(bids);
+            Bids bid = db.Bids.Find(id);
+            db.Bids.Find(id).status = "denied";
+            db.SaveChanges();
+            if (bid == null)
+            {
+                return HttpNotFound();
+            }
+            
+            return View(bid);
         }
 
         // GET: Offers/Delete/5

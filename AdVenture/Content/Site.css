@@ -22,3 +22,28 @@ select,
 textarea {
     max-width: 280px;
 }
+
+.grid-item{
+    /*background-color: lemonchiffon;*/
+
+    height: auto;
+    justify-content: center;
+    width: 300px;
+    box-shadow: 10px 10px 5px #888888;
+    display: inline-block;
+    margin-right: 35px;
+    margin-bottom: 30px;
+}
+
+.transition {
+    -webkit-transform: scale(1.05); 
+    -moz-transform: scale(1.05);
+    -o-transform: scale(1.05);
+    transform: scale(1.05);
+}
+#content {
+	-webkit-transition: all .4s ease-in-out;
+	-moz-transition: all .4s ease-in-out;
+	-o-transition: all .4s ease-in-out;
+	-ms-transition: all .4s ease-in-out;
+}

@@ -11,6 +11,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 
 
+
 namespace AdVenture.Controllers
 {
     public class OffersController : Controller
@@ -20,9 +21,11 @@ namespace AdVenture.Controllers
         // GET: Offers
         public ActionResult Index()
         {
+            
             ApplicationUser currentUser = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>().FindById(User.Identity.GetUserId());
             var userVentures = from v in db.Ventures where v.investorID == currentUser.Id select v;
-            var query = from b in db.Bids join v in userVentures on b.ventureID equals v.Id select b;
+            var query = from b in db.Bids where b.status == "pending" join v in userVentures on b.ventureID equals v.Id  select b;
+            
             return View(query.ToList());
         }
 

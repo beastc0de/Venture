@@ -54,7 +54,7 @@ namespace AdVenture.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,investorID,ventureID,bid,bidStake,createdOn,status")] Bids bids)
+        public ActionResult Create([Bind(Include = "Id,investorID,ventureID,Company,bid,bidStake,createdOn,status")] Bids bids)
         {
             if (ModelState.IsValid)
             {
@@ -63,6 +63,7 @@ namespace AdVenture.Controllers
                 bids.status = "pending";
                 bids.investorID = currentUser.Id;
                 bids.ventureID = (int)TempData["ventureId"];
+                bids.Company = db.Ventures.Find(bids.ventureID).CompanyName;
                 db.Bids.Add(bids);
                 db.SaveChanges();
                 return RedirectToAction("Index");

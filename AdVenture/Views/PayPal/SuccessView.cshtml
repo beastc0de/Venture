@@ -2,6 +2,15 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+<script>
+    $(document).ready(function () {
+        if (window != top) {
+            top.location.replace(document.location);
+        }
+    });
+</script>
+
 <h4> Your payment has been successfully processed. </h4>
+
 
 

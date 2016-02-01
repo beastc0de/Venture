@@ -2,4 +2,13 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+<script>
+    $(document).ready(function () {
+        if (window != top) {
+            top.location.replace(document.location);
+        }
+    });
+</script>
+
 <h2>Something went wrong with your payment</h2>
+

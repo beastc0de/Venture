@@ -71,9 +71,13 @@ namespace AdVenture.Controllers
         public ActionResult SuccessView(int? id)
         {
             Bids bid = db.Bids.Find(id);
-            db.Ventures.Find(bid.ventureID).CapitalRaised += bid.bid;
-            db.Bids.Find(id).status = "complete";
-            db.SaveChanges();
+            if (bid.status != "complete")
+            {
+                db.Ventures.Find(bid.ventureID).CapitalRaised += bid.bid;
+                db.Bids.Find(id).status = "complete";
+                db.SaveChanges();
+            }
+            
             return View();
         }
     }
